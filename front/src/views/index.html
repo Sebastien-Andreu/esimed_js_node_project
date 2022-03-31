@@ -1,0 +1,118 @@
+<div class="container-xxl">
+    <div id="header">
+        <h1>Social Dating</h1>
+        <div id="headerBody">
+        </div>
+    </div>
+</div>
+
+
+<div id="createSession">
+    <button type="button" class="btn btn-outline-info btn-lg">Ajouter une session de SpeedDating</button>
+</div>
+
+
+
+<div class="modal fade" id="modalSignup" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalSignupTitle">Inscription</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalSignupBody">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="pseudo" class="form-label">Pseudo</label>
+                    <input type="text" class="form-control" id="pseudo">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password">
+                </div>
+
+                <div class="mb-3" id="errorMsg"></div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="userController.inscription()">S'inscrire</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalSign" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSignTitle">Connexion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalSignBody">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="emailConnexion" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="passwordConnexion">
+                </div>
+
+                <div class="mb-3" id="errorMsgConnexion"></div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="userController.connection()">Se connecter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalLogout" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLogoutTitle">Déconnexion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalLogoutBody">
+                <div class="mb-3">
+                    Voulez-vous vraiment vous déconnecté ?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="userController.deconnection()">Se déconnecter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+    <div id="toast" class="toast" style="position: absolute; top: 0; right: 0;">
+        <div class="toast-header">
+            <strong class="mr-auto">Information</strong>
+            <button type="button" class="btn-close btn-close-dark me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+</div>
+
+<div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+    <div id="toastError" class="toast" style="position: absolute; top: 0; right: 0;">
+        <div class="toast-header">
+            <strong class="mr-auto">Erreur</strong>
+            <button type="button" class="btn-close btn-close-dark me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toastError-body">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+</div>
+
