@@ -2,7 +2,9 @@ class BaseController {
     constructor() {
         this.setBackButtonView('index')
         this.token = undefined
+        this.isConnected = false
         this.storageToken = 'TOKEN'
+        this.user = undefined
         this.baseUrl = 'http://localhost:3000/'
     }
     setBackButtonView(view) {

@@ -3,6 +3,9 @@ const { initializeConfigMiddlewares, initializeErrorMiddlwares } = require('./mi
 const userRoutes = require('../controllers/user-routes');
 const authRoutes = require('../controllers/auth-routes');
 const frontRoutes = require('../controllers/front-routes');
+const sessionRoutes = require('../controllers/session-routes');
+const userSessionRoutes = require('../controllers/user-session-routes');
+const meetRoutes = require('../controllers/meet-routes');
 const path = require("path");
 
 class WebServer {
@@ -28,7 +31,9 @@ class WebServer {
     this.app.use('/users', userRoutes.initializeRoutes());
     this.app.use(authRoutes.initializeRoutes())
     this.app.use(frontRoutes.initializeRoutes())
-
+    this.app.use('/sessions', sessionRoutes.initializeRoutes())
+    this.app.use('/userSessions', userSessionRoutes.initializeRoutes())
+    this.app.use('/meet', meetRoutes.initializeRoutes())
   }
 }
 

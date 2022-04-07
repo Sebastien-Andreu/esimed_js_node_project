@@ -9,12 +9,15 @@ class Index extends BaseController {
             this.token = localStorage.getItem(this.storageToken)
             if (this.token !== undefined) {
                 this.showHeaderConnected()
+                this.isConnected = true
             }
         }
         else {
             $("#headerBody").innerHTML = `
                 <h6 data-bs-target="#modalSign" data-bs-toggle="modal">Connexion</h6>
                 <h6 data-bs-target="#modalSignup" data-bs-toggle="modal">Inscription</h6>`
+
+            this.isConnected = false
         }
     }
 
@@ -135,9 +138,13 @@ class Index extends BaseController {
                             email.value = ""
                             password.value = ""
                             $("#errorMsgConnexion").innerHTML = ""
+
                             localStorage.setItem(this.storageToken, data)
+                            this.token = data
                             this.toastInfo("User connected !")
+                            this.isConnected = true
                             this.showHeaderConnected()
+
                         }
                     })
                 })
@@ -145,19 +152,119 @@ class Index extends BaseController {
                     this.toastError(err)
                 })
         }
-
     }
 
     showHeaderConnected() {
-        this._send('users', 'get', { 'Content-Type' : 'application/json', 'Authorization': `Bearer ${this.token}` })
+        this._send('users', 'get', {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.token}`
+        })
             .then(res => {
                 res.json().then(data => {
                     if (res.status === 200) {
+                        this.user = data
                         $("#headerBody").innerHTML = `
-                            <p>Connecté avec `+data.pseudo+`</p>
+                            <p>Connecté avec ` + data.pseudo + `</p>
                             <h6 data-bs-target="#modalLogout" data-bs-toggle="modal">Déconnexion</h6>`
+                        this.showSession()
                     } else {
                         this.deconnection()
+                        this.toastError("Le token n'est pas valide")
+                    }
+
+                })
+            })
+            .catch(err => {
+                this.deconnection()
+                this.toastError(err)
+            })
+    }
+
+    showSession() {
+        $("#headerSessionList").innerHTML = `<h1>List des sessions</h1>`
+        this._send('sessions/' + this.user.id, 'get', {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.token}`
+        })
+            .then(res => {
+                res.json().then(data => {
+                    if (res.status === 200) {
+                        $("#sessionList").innerHTML= ''
+                        data.forEach( session => {
+                            $("#sessionList").innerHTML += `
+                                <div class="containerSession" id="session`+session.id+`">
+                                <div>
+                                    <div class="headerList">
+                                        <h2>Session du `+session.date+`</h2>
+                                        <button type="button" class="btn btn-outline-info btn-lg" data-bs-target="#modalCreateUS" data-bs-toggle="modal" onclick="userController.saveSessionId(`+session.id+`)" ">Ajouter une personne</button>
+                                    </div>
+                                </div>
+                                </div>
+                            `
+
+                            this._send('userSessions/meet/' + session.id, 'get', {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${this.token}`
+                            })
+                                .then(res => {
+                                    res.json().then(data => {
+                                        if (res.status === 200) {
+                                            $("#session" + session.id).innerHTML += `<div id="meet` + session.id + `">  
+                                                <h3>Personne rencontré</h3>
+                                            </div>
+                                            `
+                                            data.forEach(userSession => {
+                                                this._send('meet/' + userSession.id + '&' + session.id, 'get', {
+                                                    'Content-Type': 'application/json',
+                                                    'Authorization': `Bearer ${this.token}`
+                                                })
+                                                    .then(res => {
+                                                        res.json().then(meet => {
+                                                            console.log(meet)
+                                                            $("#meet" + session.id).innerHTML += `
+                                                                <div class="show">` + userSession.name + `, ` + userSession.surname + `, ` + userSession.date + `, ` + userSession.sexe + `, ` + meet[0].note + `/10
+                                                                    <button type="button" class="btn btn-danger" data-bs-target="#modalDeleteMeet" data-bs-toggle="modal"  onclick="userController.saveUserToMeet(` + userSession.id + `, ` + session.id + `)">Supprimer</button>
+                                                                </div>
+                                                            `
+                                                        })
+                                                    })
+                                                    .catch(err => {
+                                                        this.toastError(err)
+                                                    })
+                                            })
+
+                                        }
+                                    })
+                                })
+                                .catch(err => {
+                                    this.toastError(err)
+                                })
+
+                            this._send('userSessions/notMeet/' + session.id, 'get', {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${this.token}`
+                            })
+                                .then(res => {
+                                    res.json().then(data => {
+                                        if (res.status === 200) {
+                                            $("#session" + session.id).innerHTML += `<div id="notMeet`+session.id+`">  
+                                                <h3>Personne a rencontrer</h3>
+                                            </div>`
+                                            data.forEach( userSession => {
+                                                $("#notMeet" + session.id).innerHTML += `
+                                                    <div class="show">` + userSession.name +`, `+ userSession.surname+`, `+ userSession.date+`, `+ userSession.sexe + `
+                                                        <button type="button" class="btn btn-success" data-bs-target="#modalMeet" data-bs-toggle="modal"  onclick="userController.saveUserToMeet(`+userSession.id+`, `+session.id+`)" ">Rencontrer</button>
+                                                        <button type="button" class="btn btn-danger" data-bs-target="#modalDelete" data-bs-toggle="modal"  onclick="userController.saveUserSelected(`+userSession.id+`)" ">Supprimer</button>
+                                                    </div>
+                                                `
+                                            })
+                                        }
+                                    })
+                                })
+                                .catch(err => {
+                                    this.toastError(err)
+                                })
+                        })
                     }
                 })
             })
@@ -168,7 +275,130 @@ class Index extends BaseController {
 
     deconnection() {
         localStorage.removeItem(this.storageToken)
+        this.isConnected = false
+        $("#headerSessionList").innerHTML = ''
+        $("#sessionList").innerHTML = ''
         this.init()
+    }
+
+    onUserWantToCreateSession() {
+        if (!this.isConnected) {
+            new bootstrap.Modal("#modalSign").show()
+        } else {
+            const today = new Date();
+            const myDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+
+            this._send('sessions', 'post', { 'Content-Type' : 'application/json', 'Authorization': `Bearer ${this.token}` }, {
+                date: myDate,
+                idUser: this.user.id
+            })
+                .then(res => {
+                    this.toastInfo("Une nouvelle session a été créée")
+                    this.init()
+                })
+                .catch(err => {
+                    this.toastError(err)
+                })
+        }
+    }
+
+    addUserSession() {
+        if (this.sessionId !== undefined) {
+            let genre = undefined
+            if ($("#USHomme").checked) {
+                genre = "Homme"
+            } else {
+                genre = "Femme"
+            }
+
+            this._send('userSessions', 'post', { 'Content-Type' : 'application/json', 'Authorization': `Bearer ${this.token}` }, {
+                name: $("#USName").value,
+                surname: $("#USSurname").value,
+                sexe: genre,
+                date: $("#USDate").value,
+                idSession: this.sessionId
+            })
+                .then(res => {
+                    this.toastInfo("Une nouvelle utilisateur a été ajouté a la session")
+                    $('#modalCreateUS').style.display = "none"
+                    $('.modal-backdrop').style.display = "none"
+                    this.init()
+                })
+                .catch(err => {
+                    this.toastError(err)
+                })
+        }
+    }
+
+    saveSessionId(id) {
+        this.sessionId = id
+    }
+
+    saveUserSelected(id) {
+        this.idUserSelected = id
+    }
+
+    saveUserToMeet(idUser, idSession) {
+        this.idUserSelected = idUser
+        this.sessionId = idSession
+    }
+
+    deleteUserSession() {
+        if (this.idUserSelected !== undefined) {
+            this._send('userSessions', 'delete', { 'Content-Type' : 'application/json', 'Authorization': `Bearer ${this.token}` }, {
+                idSession: this.idUserSelected,
+            })
+                .then(res => {
+                    this.toastInfo("l'utilisateur a bien été supprimé")
+                    this.init()
+                    this.userSelected = undefined
+                })
+                .catch(err => {
+                    this.toastError(err)
+                })
+        }
+    }
+
+    meetUserSession() {
+        if (this.idUserSelected !== undefined && this.sessionId !== undefined) {
+            const today = new Date();
+            const myDate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+
+            this._send('meet', 'post', { 'Content-Type' : 'application/json', 'Authorization': `Bearer ${this.token}` }, {
+                date: myDate,
+                idUser: this.user.id,
+                idSession: this.sessionId,
+                idUserSession: this.idUserSelected,
+                note: $("#meetNote").value
+            })
+                .then(res => {
+                    this.toastInfo("l'utilisateur a bien été rencontré")
+                    this.init()
+                    $("#meetNote").value = "0"
+                    this.userSelected = undefined
+                })
+                .catch(err => {
+                    this.toastError(err)
+                })
+        }
+    }
+
+    deleteUserSessionMeet() {
+        if (this.idUserSelected !== undefined && this.sessionId !== undefined) {
+            this._send('meet', 'delete', { 'Content-Type' : 'application/json', 'Authorization': `Bearer ${this.token}` }, {
+                idUser: this.user.id,
+                idSession: this.sessionId,
+                idUserSession: this.idUserSelected
+            })
+                .then(res => {
+                    this.toastInfo("la rencontre a bien été supprimé")
+                    this.init()
+                    this.userSelected = undefined
+                })
+                .catch(err => {
+                    this.toastError(err)
+                })
+        }
     }
 }
 

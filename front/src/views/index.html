@@ -6,11 +6,14 @@
     </div>
 </div>
 
-
 <div id="createSession">
-    <button type="button" class="btn btn-outline-info btn-lg">Ajouter une session de SpeedDating</button>
+    <button type="button" class="btn btn-outline-info btn-lg" onclick="userController.onUserWantToCreateSession()">Ajouter une session de SpeedDating</button>
 </div>
 
+<div class="container-xxl">
+    <div id="headerSessionList"></div>
+    <div id="sessionList"></div>
+</div>
 
 
 <div class="modal fade" id="modalSignup" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
@@ -22,7 +25,7 @@
             </div>
             <div class="modal-body" id="modalSignupBody">
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email address</label>
+                    <label for="email" class="form-label">Adresse email</label>
                     <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
                 </div>
                 <div class="mb-3">
@@ -30,7 +33,7 @@
                     <input type="text" class="form-control" id="pseudo">
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label">Mot de passe</label>
                     <input type="password" class="form-control" id="password">
                 </div>
 
@@ -53,11 +56,11 @@
             </div>
             <div class="modal-body" id="modalSignBody">
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email address</label>
+                    <label for="email" class="form-label">Adresse email</label>
                     <input type="email" class="form-control" id="emailConnexion" aria-describedby="emailHelp">
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label">Mot de passe</label>
                     <input type="password" class="form-control" id="passwordConnexion">
                 </div>
 
@@ -66,6 +69,45 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="userController.connection()">Se connecter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalCreateUS" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalCreateUSTitle">Inscription</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalCreateUSBody">
+                <div class="mb-3">
+                    <label for="USName" class="form-label">Nom</label>
+                    <input type="email" class="form-control" id="USName" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="USSurname" class="form-label">Prénom</label>
+                    <input type="text" class="form-control" id="USSurname">
+                </div>
+                <div class="mb-3">
+                    <label for="USDate" class="form-label">Date de naissance</label>
+                    <input type="text" class="form-control" id="USDate">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Genre</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="USHomme" value="option1">
+                        <label class="form-check-label" for="USHomme">Homme</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="USFemme" value="option2">
+                        <label class="form-check-label" for="USFemme">Femme</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="userController.addUserSession()">Ajouter</button>
             </div>
         </div>
     </div>
@@ -91,6 +133,64 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalDelete" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDeleteTitle">Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDeleteBody">
+                <div class="mb-3">
+                    Voulez-vous vraiment supprimé cet utilisateur ?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="userController.deleteUserSession()">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDeleteMeet" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDeleteMeetTitle">Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDeleteMeetBody">
+                <div class="mb-3">
+                    Voulez-vous vraiment supprimé la rencontre avec cet utilisateur ? ?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="userController.deleteUserSessionMeet()">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalMeet" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalMeetTitle">Rencontre</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalMeetBody">
+                <div class="mb-3">
+                    <label for="meetNote" class="form-label">Note de la rencontre</label>
+                    <input type="number" min="0" max="10" class="form-control" id="meetNote" value="0"
+                           onKeyUp="if(this.value>10){this.value='10';}else if(this.value<0){this.value='0';}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="userController.meetUserSession()">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
     <div id="toast" class="toast" style="position: absolute; top: 0; right: 0;">
