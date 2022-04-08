@@ -222,7 +222,7 @@ class Index extends BaseController {
                                                         res.json().then(meet => {
                                                             console.log(meet)
                                                             $("#meet" + session.id).innerHTML += `
-                                                                <div class="show">` + userSession.name + `, ` + userSession.surname + `, ` + userSession.date + `, ` + userSession.sexe + `, ` + meet[0].note + `/10
+                                                                <div class="show">` + userSession.name + `, ` + userSession.surname + `, ` + userSession.date + `, ` + userSession.sexe + `, ` + meet[0].note + `/10 rencontré le `+ meet[0].date +` 
                                                                     <button type="button" class="btn btn-danger" data-bs-target="#modalDeleteMeet" data-bs-toggle="modal"  onclick="userController.saveUserToMeet(` + userSession.id + `, ` + session.id + `)">Supprimer</button>
                                                                 </div>
                                                             `
